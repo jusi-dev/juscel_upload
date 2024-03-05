@@ -3,7 +3,7 @@ import cors from "cors";
 import simpleGit from "simple-git";
 import path from "path";
 
-import { generate } from './utils'
+import { generate, removeOutputs } from './utils'
 import { getAllFiles } from './file'
 import { uploadFile, pushToSQS, updateStatus, getStatus } from './aws'
 
@@ -23,7 +23,8 @@ app.post("/deploy", async (req, res) => {
     })
 
     pushToSQS(id);
-    updateStatus(id, 'uploaded');
+    updateStatus(id, 'Uploading Files...');
+    removeOutputs(id);
 
     res.json({
         id: id
