@@ -18,7 +18,7 @@ app.post("/deploy", async (req, res) => {
 
     const files = getAllFiles(path.join(__dirname, `output/${id}`))
 
-    files.forEach(async file => {
+    await files.forEach(async file => {
         await uploadFile(file.slice(__dirname.length + 1), file);
     })
 
