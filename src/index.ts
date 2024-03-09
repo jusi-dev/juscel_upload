@@ -13,17 +13,22 @@ app.use(express.json());
 
 app.post("/deploy", async (req, res) => {
     const repoUrl = req.body.repoUrl;
+    const buildCommand = req.body.buildCommand;
+    const installCommand = req.body.installCommand;
+
     const id = generate();
     await simpleGit().clone(repoUrl, path.join(__dirname, `output/${id}`));
 
     const files = getAllFiles(path.join(__dirname, `output/${id}`))
 
-    await files.forEach(async file => {
+    await Promise.all(files.map(async file => {
+        console.log("Uploading file: ", file);
         await uploadFile(file.slice(__dirname.length + 1), file);
-    })
+    }));
 
+    console.log("Pushing to SQS")
     pushToSQS(id);
-    updateStatus(id, 'Uploading Files...');
+    updateStatus(id, 'Uploading Files...', buildCommand, installCommand);
     removeOutputs(id);
 
     res.json({

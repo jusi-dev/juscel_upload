@@ -22,7 +22,7 @@ export const uploadFile = async (fileName: string, localFilePath: string) => {
     
     try {
         const response = await s3Client.send(uploadCommand);
-        console.log(response);
+        // console.log(response);
     } catch (err) {
         console.log(err);
     }
@@ -44,17 +44,19 @@ export const pushToSQS = async (message: string) => {
     });
 }
 
-export const updateStatus = async (id: string, status: string) => {
+export const updateStatus = async (id: string, status: string, buildCommand: string, installCommand: string) => {
     const command = new PutCommand({
         TableName: 'juscel',
         Item: {
             id: id,
-            status: status
+            status: status,
+            buildCommand: buildCommand,
+            installCommand: installCommand
         }
     });
 
     const response = await docClient.send(command);
-    console.log(response);
+    // console.log(response);
 };
 
 export const getStatus = async (id: string) => {
@@ -66,6 +68,6 @@ export const getStatus = async (id: string) => {
     });
 
     const response = await docClient.send(command);
-    console.log(response);
+    // console.log(response);
     return response.Item?.status;
 }
